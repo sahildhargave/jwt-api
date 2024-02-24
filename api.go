@@ -5,6 +5,9 @@ import (
 	"net/http"
 )
 
+func WriteJSON(w http.ResponseWriter, status int, v any) error{
+	
+}
 type apiFunc func(http.ResponseWriter,*http.Request) error
 
 func makeHTTPHandlerFunc(f apiFunc) http.HandlerFunc{
