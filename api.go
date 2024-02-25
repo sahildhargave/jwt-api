@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -41,19 +42,37 @@ func NewAPIServer(listenAddr string) *APIServer {
 
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
-	router.HandleFunc("/account", makeHTTPHandleFunc(s.handleAccount)).Methods("GET")
-	// Add other routes and handlers here
-	log.Println("JSON API server running on port:", s.listenAddr)
+
+
+	router.HandleFunc("/account", makeHTTPHandleFunc(s.handleAccount))
+	router.HandleFunc("/account/{id}", makeHTTPHandleFunc(s.handleGetAccount))
+	
+	
+
+	log.Println("JSON API server running on port: ", s.listenAddr)
 
 	http.ListenAndServe(s.listenAddr, router)
 }
 
 func (s *APIServer) handleAccount(w http.ResponseWriter, r *http.Request) error {
-	return nil
+	if r.Method == "GET"{
+		return s.handleGetAccount(w,r)
+	}
+	if r.Method == "POST"{
+		return s.handleCreateAccount(w,r)
+	}
+	if r.Method == "DELETE"{
+	    return s.handleDeleteAccount(w,r)
+	}
+	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
 func (s *APIServer) handleGetAccount(w http.ResponseWriter, r *http.Request) error {
-	return nil
+	vars := mux.Vars(r)["id"]
+
+	//account := NewAccount("sahil","D")
+    
+	return WriteJSON(w, http.StatusOK,&Account{})
 }
 
 func (s *APIServer) handleCreateAccount(w http.ResponseWriter, r *http.Request) error {
